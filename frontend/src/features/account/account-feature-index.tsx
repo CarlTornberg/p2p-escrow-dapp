@@ -6,7 +6,7 @@ export default function AccountFeatureIndex({ redirect }: { redirect: (path: str
   const { account } = useSolana()
 
   if (account) {
-    return redirect(`/account/${account.address.toString()}`)
+    return redirect(`/escrow/${account.address.toString()}`)
   }
 
   return (
