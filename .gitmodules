@@ -1,3 +1,6 @@
 [submodule "p2p-token-escrow"]
 	path = p2p-token-escrow
 	url = git@github.com:CarlTornberg/p2p-token-escrow.git
+[submodule "backend/p2p-token-escrow"]
+	path = backend/p2p-token-escrow
+	url = git@github.com:CarlTornberg/p2p-token-escrow.git
