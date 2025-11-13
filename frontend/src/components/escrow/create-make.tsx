@@ -1,13 +1,14 @@
 'use client'
 
-import { ReactElement, useMemo, useState } from "react";
+import { ReactElement, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
-import { Account, Address, address, getProgramDerivedAddress } from "gill";
+import { Account, address } from "gill";
 import { useSolana } from "../solana/use-solana";
 import * as escrow from "../../../../codama/clients/js/src/generated/index";
-import { fetchMint, fetchToken, Mint } from "gill/programs";
-import { isNft } from "@/lib/metaplex";
+import { fetchMetadata, fetchMint, Mint, TokenStandard } from "gill/programs";
+import { getMintMetadataMetaplex, isNft, NonFungibleAssetToken } from "@/lib/metaplex";
+import { Button } from "../ui/button";
 
 export default function CreateMake() {
 
@@ -26,24 +27,43 @@ export default function CreateMake() {
           try{
             const mint = await fetchMint(solana.client.rpc, address(e.target.value));
             setOfferMint(mint);
-            const mintMetaplex = getProgramDerivedAddress({
-              programAddress: address(""), 
-              seeds: []
-            });
-            console.log(mint);
+            const mintMetaplex = await getMintMetadataMetaplex(address(e.target.value));
+            const metaplexAcc = await fetchMetadata(solana.client.rpc, mintMetaplex[0]);
+            if (metaplexAcc.data.tokenStandard.__option == "Some") {
+              switch (metaplexAcc.data.tokenStandard.value) {
+                case TokenStandard.NonFungible:
+                  const data = (await (await fetch(metaplexAcc.data.data.uri)).json()) as NonFungibleAssetToken;
+                  console.log(data);
+                  break;
+                default:
+                  break;
+              }
+            }
           }
           catch(e) {
             console.log(e)
           }
         }}
-      placeholder="ex: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
-    />
-    {offerMint != null ? MintData(offerMint) : <>Mint is null</>}
-    <Card> 
-      <CardTitle>Mint details</CardTitle>
-    </Card>
+        placeholder="ex: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+      />
+      {offerMint != null ? MintData(offerMint) : <>Mint is null</>}
+      <Card> 
+        <CardTitle>Mint details</CardTitle>
+      </Card>
+      <Button 
+        onClick={async () => {
+          const pk = await getMintMetadataMetaplex(offerMint!.address);
+
+          console.log(pk);
+        }}  
+      > Click me </Button>
+      <img src={"https://gateway.irys.xyz/5vVT2M49ZUvAAnPWokgqoB2L8HsSKq3RwXXvVRCfxcXg"}/>
     </CardContent>
   </Card>
+}
+
+function OfferAmount(mint: Account<Mint>): ReactElement {
+  return <Input />
 }
 
 function MintData(mint: Account<Mint>): ReactElement {
