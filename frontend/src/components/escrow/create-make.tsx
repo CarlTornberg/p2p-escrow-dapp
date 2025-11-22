@@ -16,6 +16,7 @@ export default function CreateMake() {
 
   const [offerAmount, setOfferAmount] = useState(0);
   const [offerMint, setOfferMint] = useState<Account<Mint>>();
+  const [metaplexData, setMetaplexData] = useState();
 
   return <Card>
     <CardHeader>Create Make</CardHeader>
@@ -57,7 +58,11 @@ export default function CreateMake() {
           console.log(pk);
         }}  
       > Click me </Button>
-      <img src={"https://gateway.irys.xyz/5vVT2M49ZUvAAnPWokgqoB2L8HsSKq3RwXXvVRCfxcXg"}/>
+      <img 
+        src="https://gateway.irys.xyz/5vVT2M49ZUvAAnPWokgqoB2L8HsSKq3RwXXvVRCfxcXg"
+        width="100px"
+        height="auto"
+      />
     </CardContent>
   </Card>
 }
